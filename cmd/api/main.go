@@ -17,6 +17,7 @@ import (
 
 func main() {
 	godotenv.Load(".env")
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		log.Fatal("PORT is not found in environment")
@@ -39,7 +40,6 @@ func main() {
 	}
 
 	router := chi.NewRouter()
-
 	router.Use(
 		cors.Handler(
 			cors.Options{
@@ -54,10 +54,9 @@ func main() {
 	)
 
 	v1router := chi.NewRouter()
-	v1router.Get("/healthz", handler.HandlerReadiness)
-	v1router.Get("/err", handler.HandlerErr)
-	v1router.Post("/users", handler.MakeHandlerCreateUser(apiCfg))
-
+	v1router.Get("/healthz", handler.HandleReadiness)
+	v1router.Get("/err", handler.HandleErr)
+	v1router.Post("/users", handler.HandleCreateUser(apiCfg))
 	router.Mount("/v1", v1router)
 
 	srv := &http.Server{
@@ -66,9 +65,8 @@ func main() {
 	}
 
 	log.Printf("Server starting on port %v", port)
-
-	servererr := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 	if err != nil {
-		log.Fatal(servererr)
+		log.Fatal(err)
 	}
 }

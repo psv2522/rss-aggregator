@@ -36,10 +36,10 @@ func HandlerCreateUser(apiCfg *config.ApiConfig, w http.ResponseWriter, r *http.
 		return
 	}
 
-	api.RespondWithJSON(w, 201, user)
+	api.RespondWithJSON(w, 201, api.DbUsertoUser(user))
 }
 
-func MakeHandlerCreateUser(apiCfg config.ApiConfig) http.HandlerFunc {
+func HandleCreateUser(apiCfg config.ApiConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		HandlerCreateUser(&apiCfg, w, r)
 	}
