@@ -8,11 +8,12 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/psv2522/rss-aggregator/api"
+	"github.com/psv2522/rss-aggregator/internal/auth"
 	"github.com/psv2522/rss-aggregator/internal/config"
 	"github.com/psv2522/rss-aggregator/internal/database"
 )
 
-func HandlerCreateUser(apiCfg *config.ApiConfig, w http.ResponseWriter, r *http.Request) {
+func handlerCreateUser(apiCfg *config.ApiConfig, w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Name string `json:"name"`
 	}
@@ -41,6 +42,24 @@ func HandlerCreateUser(apiCfg *config.ApiConfig, w http.ResponseWriter, r *http.
 
 func HandleCreateUser(apiCfg config.ApiConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		HandlerCreateUser(&apiCfg, w, r)
+		handlerCreateUser(&apiCfg, w, r)
+	}
+}
+
+func HandleGetUser(apiCfg config.ApiConfig) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		apiKey, err := auth.GetAPIKey(r.Header)
+		if err != nil {
+			api.RespondWithError(w, 401, "Auth Error")
+			return
+		}
+
+		user, err := apiCfg.DB.GetUserByAPIKey(r.Context(), apiKey)
+		if err != nil {
+			api.RespondWithError(w, 401, "Could'nt find user")
+			return
+		}
+
+		api.RespondWithJSON(w, 200, api.DbUsertoUser(user))
 	}
 }

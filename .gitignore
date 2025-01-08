@@ -2,3 +2,4 @@
 rss-aggregator
 .vscode/
 tmp/
+.aider*

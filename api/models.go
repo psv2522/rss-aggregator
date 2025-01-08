@@ -10,6 +10,7 @@ type User struct {
 	CreatedAt pgtype.Timestamp `json:"created_at"`
 	UpdatedAt pgtype.Timestamp `json:"updated_at"`
 	Name      string           `json:"name"`
+	ApiKey    string           `json:"api_key"`
 }
 
 func DbUsertoUser(dbUser database.User) User {
@@ -18,5 +19,6 @@ func DbUsertoUser(dbUser database.User) User {
 		CreatedAt: dbUser.CreatedAt,
 		UpdatedAt: dbUser.UpdatedAt,
 		Name:      dbUser.Name,
+		ApiKey:    dbUser.ApiKey,
 	}
 }
